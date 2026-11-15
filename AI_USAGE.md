@@ -8,9 +8,9 @@ so we declare them here and label them on the site with the note **“AI-generat
 
 | Asset | File | Where it is used |
 |---|---|---|
-| Potatonaut (potato astronaut mascot) | `Patata astronauta kawaii en 3D.png` → `web/public/brand/potatonaut-*.webp` | Assistant avatar, floating button, empty states |
-| Farmer character | `Granjero abuelo con rastrillo.png` → `web/public/brand/granjero-*.webp` | Landing and onboarding |
-| Hero video (Potatonaut on a hill) | `hero.mp4` → `web/public/media/hero-*.mp4` | Landing hero |
+| Potatonaut (potato astronaut mascot) | `frontend/assets-src/Patata astronauta kawaii en 3D.png` → `frontend/public/brand/potatonaut-*.webp` | Assistant avatar, floating button, empty states |
+| Farmer character | `frontend/assets-src/Granjero abuelo con rastrillo.png` → `frontend/public/brand/granjero-*.webp` | Landing and onboarding |
+| Hero video (Potatonaut on a hill) | `frontend/assets-src/hero.mp4` → `frontend/public/media/hero-*.mp4` | Landing hero |
 
 No NASA logos or official NASA graphics were generated or altered with AI.
 
@@ -22,4 +22,4 @@ validation of results belong to the Potatonauts team.
 ## Potatonaut (the assistant inside Groundy)
 In this version Potatonaut answers with deterministic templates filled only with values returned by the Groundy API.
 No language model generates free numbers. No trained model is in use yet; future models are described in
-`docs/01_PLAN_PRODUCTO.md` §4.3.
+`frontend/docs/01_PLAN_PRODUCTO.md` §4.3.
