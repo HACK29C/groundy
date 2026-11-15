@@ -1,0 +1,211 @@
+import type { Dict } from './en'
+
+export const es: Dict = {
+  nav: {
+    explore: 'Explorar',
+    how: 'Cómo funciona',
+    data: 'Datos NASA',
+    team: 'Equipo',
+    enter: 'Entrar a mi finca',
+    menu: 'Abrir menú',
+    close: 'Cerrar menú',
+    lang: 'English',
+    langCode: 'EN',
+    home: 'Inicio de Groundy',
+  },
+  hero: {
+    badge: 'NASA Space Apps 2026 · Field Shift',
+    title: 'Tu finca, vista desde el espacio.',
+    lead: 'Groundy lleva los datos satelitales y climáticos de la NASA hasta tu parcela, guarda la historia de cada temporada que siembras y muestra de dónde sale cada número.',
+    cta1: 'Entrar a mi finca',
+    cta2: 'Explorar un punto',
+    aiNote: 'Ilustración generada con IA',
+    pause: 'Pausar el video de fondo',
+    play: 'Reproducir el video de fondo',
+  },
+  challenge: {
+    title: 'El agricultor lee el cielo. Los datos del espacio casi nunca llegan al suelo.',
+    lead: 'Los satélites observan cada campo del planeta, pero ese conocimiento rara vez llega de una forma que el agricultor pueda usar o creer.',
+    items: [
+      {
+        title: 'Pocas estaciones cerca',
+        text: 'En las zonas rurales de montaña las estaciones están lejos, y la siembra se decide con la memoria de temporadas pasadas.',
+      },
+      {
+        title: 'Datos sin contexto',
+        text: 'Un dato climático suele describir un área de decenas de kilómetros, no tu parcela, y las herramientas casi nunca lo aclaran.',
+      },
+      {
+        title: 'Pronósticos o silencio',
+        text: 'Las aplicaciones prometen pronósticos que no pueden respaldar o muestran cifras que nadie explica.',
+      },
+    ],
+  },
+  platform: {
+    title: 'Tus parcelas, sus temporadas y la evidencia, en un solo lugar',
+    items: [
+      {
+        title: 'Marca tus parcelas',
+        text: 'Dibuja sobre la imagen satelital o recorre el lindero con el GPS del celular. El área se calcula de forma geodésica.',
+      },
+      {
+        title: 'Registra cada temporada',
+        text: 'La parcela permanece; cada temporada es un nuevo ciclo con sus actividades y su cosecha.',
+      },
+      {
+        title: 'Mira qué encaja',
+        text: 'Aptitud de 42 cultivos y rotaciones puntuadas para tu ubicación, con el factor que las limita.',
+      },
+      {
+        title: 'Evidencia detrás de cada cifra',
+        text: 'Fuente, periodo, resolución y método, a un toque de cualquier valor.',
+      },
+      {
+        title: 'Registros verificables',
+        text: 'Cada evento se encadena al anterior con un hash; si alguien cambia el historial, se nota.',
+      },
+      {
+        title: 'Funciona en el campo',
+        text: 'Todo se guarda primero en tu dispositivo y se sincroniza cuando hay señal.',
+      },
+    ],
+  },
+  scale: {
+    title: 'Cada fuente ve tu finca de un tamaño distinto',
+    lead: 'Una parcela de 3 hectáreas es más o menos una parte en 120 000 de la celda climática de NASA POWER que la cubre. Groundy dibuja esa huella en vez de esconderla.',
+    hint: 'Elige una fuente para ver su huella.',
+    note: 'Cuadros en escala logarítmica para que quepan todos.',
+    items: {
+      s2: { label: 'Píxel de Sentinel-2', size: '10 m', text: 'Lo bastante fino para ver diferencias dentro de la finca.' },
+      plot: { label: 'Tu parcela', size: '~3 ha', text: 'Unos 180 × 180 m. Es lo que tú manejas.' },
+      modis: { label: 'Píxel de vegetación MODIS', size: '250 m', text: 'Un valor puede mezclar tu parcela con las vecinas.' },
+      smap: { label: 'Humedad del suelo SMAP', size: '~9 km', text: 'Una lectura regional del suelo, no la de tu lote.' },
+      imerg: { label: 'Lluvia GPM IMERG', size: '~10 km', text: 'Lluvia estimada por satélite para toda la zona.' },
+      power: { label: 'Clima NASA POWER', size: '~55 × 69 km', text: 'Temperatura y lluvia promediadas en una celda grande.' },
+    },
+  },
+  data: {
+    title: 'Los datos del espacio detrás de Groundy',
+    lead: 'Solo aparecen las fuentes que hoy funcionan en Groundy. Cada una dice qué puede contarte y qué no.',
+    head: { source: 'Fuente', what: 'Qué te cuenta', res: 'Resolución', cannot: 'Qué no puede decirte' },
+    partner: 'ESA Copernicus, complementa los datos NASA',
+    rows: [
+      {
+        source: 'NASA POWER',
+        what: 'Temperatura, lluvia, evapotranspiración de referencia (ET₀) y aridez',
+        res: '0,5° × 0,625° (~55 × 69 km)',
+        cannot: 'Una helada en la ladera o la lluvia de una sola parcela',
+      },
+      {
+        source: 'GPM IMERG',
+        what: 'Lluvia mensual estimada por satélite',
+        res: '~10 km',
+        cannot: 'La lluvia exacta en tu lote; puede diferir mucho de POWER',
+      },
+      {
+        source: 'MODIS MOD13Q1',
+        what: 'Verdor de la vegetación (NDVI, EVI) mes a mes',
+        res: '250 m',
+        cannot: 'Qué cultivo está sembrado o si está enfermo',
+      },
+      {
+        source: 'MODIS MOD11A2',
+        what: 'Temperatura de la superficie del suelo',
+        res: '1 km',
+        cannot: 'La temperatura del aire; de día el suelo está más caliente',
+      },
+      {
+        source: 'SMAP L4',
+        what: 'Humedad del suelo superficial y de la zona de raíces',
+        res: '~9 km',
+        cannot: 'La humedad del suelo de tu propia parcela',
+      },
+      {
+        source: 'SRTM',
+        what: 'Elevación y pendiente dentro de la finca',
+        res: '30 m',
+        cannot: 'La fertilidad o el drenaje del suelo',
+      },
+      {
+        source: 'Sentinel-2',
+        what: 'Verdor detallado dentro de la finca',
+        res: '10 m',
+        cannot: 'Lo que pasa en fechas nubladas',
+        partner: true,
+      },
+    ],
+    foot: 'Procesado por la API de Groundy con Google Earth Engine y el servicio NASA POWER.',
+  },
+  how: {
+    title: 'Cómo te llega un número',
+    steps: [
+      { title: 'Marcas un punto o una parcela', text: 'Con tu ubicación o dibujando sobre el mapa.' },
+      {
+        title: 'Groundy consulta los datos del espacio',
+        text: 'La API de Groundy pregunta a NASA POWER y a Google Earth Engine. Un lugar nuevo tarda cerca de un minuto y medio; uno repetido responde al instante.',
+      },
+      { title: 'El motor puntúa cultivos', text: 'Aptitud de 42 cultivos y rotaciones, con lo que las limita: lluvia o temperatura.' },
+      { title: 'Cada valor se vuelve un hecho', text: 'Conserva su fuente, periodo, resolución y la versión del motor que lo calculó.' },
+      {
+        title: 'Tú decides y queda registrado',
+        text: 'Potatonaut explica; tú aceptas, descartas o ajustas, y tu decisión entra al historial de la parcela.',
+      },
+    ],
+    example: {
+      title: 'Una lectura real · Ipiales, Nariño, Colombia',
+      rows: [
+        ['Lluvia anual · NASA POWER', '1105 mm'],
+        ['Lluvia anual · GPM IMERG', '2078 mm'],
+        ['Temperatura media · NASA POWER', '13,2 °C'],
+        ['Aptitud de la papa · mejor mes', '0,92 · octubre'],
+      ],
+      note: 'Las dos fuentes de lluvia no coinciden, así que Groundy muestra un rango de 1105 a 2078 mm en vez de escoger una.',
+      source: 'api.groundy.site · motor 1.2 · consultado el 15 nov 2026',
+    },
+  },
+  potatonaut: {
+    title: 'Conoce a Potatonaut',
+    lead: 'Una papa astronauta que explica tus datos con palabras sencillas. Solo usa valores de tu propio análisis y te dice cuando no sabe algo.',
+    you: 'Tú',
+    chat: [
+      {
+        q: '¿Va a llover la próxima semana?',
+        a: 'No hago pronósticos del tiempo. Puedo mostrarte cómo suele comportarse este mes en tu zona, con registros satelitales de años anteriores.',
+      },
+      {
+        q: '¿Qué tan confiable es este dato de lluvia para mi parcela?',
+        a: 'Es un promedio de una celda de unos 55 × 69 km. Tu parcela es una parte muy pequeña, así que tómalo como dato regional, no de tu lote.',
+      },
+      {
+        q: '¿Qué debería sembrar?',
+        a: 'Puedo mostrarte qué cultivos se han adaptado al clima de tu zona y por qué. La decisión es tuya, y un agrónomo puede confirmarla.',
+      },
+    ],
+  },
+  team: {
+    title: 'Hecho por Potatonauts',
+    lead: 'Un equipo de Ipiales, Colombia, que responde al reto Field Shift del NASA Space Apps Challenge 2026.',
+  },
+  cta: {
+    title: 'Empieza con una parcela',
+    lead: 'Dibújala, cuéntale a Groundy qué siembras y mira la evidencia.',
+    button: 'Entrar a mi finca',
+  },
+  footer: {
+    platform: 'Plataforma',
+    resources: 'Recursos',
+    explore: 'Explorar un punto',
+    farm: 'Mi finca',
+    methods: 'Datos NASA que usamos',
+    api: 'Documentación de la API',
+    ai: 'Declaración de uso de IA',
+    repo: 'Código fuente',
+    event: 'NASA Space Apps Challenge 2026 · Field Shift',
+    disclaimer: 'Groundy es un proyecto abierto de Potatonauts. No es un producto oficial de la NASA.',
+  },
+  soon: {
+    title: 'Muy pronto',
+    lead: 'Potatonaut todavía está construyendo esta parte de Groundy.',
+    back: 'Volver al inicio',
+  },
+}
