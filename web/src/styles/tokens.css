@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/*
+  Tokens de Groundy.
+  Colores muestreados de los recursos del equipo (logo, video del hero, Potatonaut) y del Documento Maestro (arcilla).
+  Contraste WCAG medido sobre crema #FFF9F5:
+    bosque 12.1 · tinta 14.2 · gris 5.3 · cielo-osc 5.5 · pradera-osc 5.8 · papa-osc 5.2 · arcilla 4.7  → aptos para texto
+    cielo 3.0 · pradera 2.4 · papa 2.2                                                                 → solo rellenos o texto grande
+  Sobre bosque: crema 12.1 · papa 5.5 · pradera 4.9.
+*/
+@theme {
+  --color-bosque: #0e3b23;
+  --color-bosque-700: #165233;
+  --color-tinta: #1f2a24;
+  --color-gris: #5e6b64;
+  --color-borde: #e9e1d8;
+
+  --color-crema: #fff9f5;
+  --color-papel: #ffffff;
+  --color-casco: #cfe8f2;
+  --color-niebla: #e8f3ee;
+
+  --color-cielo: #3c9cb4;
+  --color-cielo-osc: #1d6f84;
+  --color-pradera: #7ab22a;
+  --color-pradera-osc: #3f6e12;
+  --color-papa: #e49c54;
+  --color-papa-suave: #fbe6cf;
+  --color-papa-osc: #9a5a1c;
+  --color-arcilla: #c4452d;
+  --color-arcilla-suave: #fbe3dd;
+
+  --font-display: "Young Serif", Georgia, serif;
+  --font-sans: "Quicksand", system-ui, sans-serif;
+
+  /* Cada nivel con su propio radio: hojas y secciones muy curvas, controles en píldora, chips intermedios. */
+  --radius-hoja: 2rem;
+  --radius-tarjeta: 1.5rem;
+  --radius-chip: 0.875rem;
+
+  --shadow-suave: 0 1px 2px rgb(14 59 35 / 0.06), 0 8px 24px -12px rgb(14 59 35 / 0.18);
+  --shadow-flota: 0 12px 32px -10px rgb(14 59 35 / 0.35);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-crema);
+    color: var(--color-tinta);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    color: var(--color-bosque);
+    line-height: 1.12;
+    font-weight: 400;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-cielo-osc);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  .cifra {
+    font-variant-numeric: tabular-nums;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
