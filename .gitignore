@@ -1,0 +1,18 @@
+# --- Entornos y cache ---
+.venv/
+**/__pycache__/
+*.pyc
+**/.ipynb_checkpoints/
+
+# --- Credenciales y secretos (NUNCA al repositorio) ---
+**/secrets/
+**/.env
+.env
+
+# --- Datos pesados (solo se versiona crop_requirements.csv) ---
+*.csv
+!backend/data/crop_requirements.csv
+
+# --- Artefactos de despliegue ---
+**/groundy_deploy.tar.gz
+groundy_deploy.tar.gz
