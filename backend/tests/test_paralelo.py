@@ -24,7 +24,8 @@ sys.modules["ee"] = mock.MagicMock()  # Earth Engine simulado (sin llave)
 import point_engine as pe  # noqa: E402
 
 ESCALA = 0.1  # 1 s real -> 0,1 s en la prueba
-DEMORA = {"power": 3, "elev": 4, "modis": 15, "smap": 14, "imerg": 12, "zonal": 6, "s2": 20}
+# Demoras medidas en la Orange Pi (19 nov 2026): solo SMAP es lenta (35-56 s por banda); el resto tarda 1-4 s
+DEMORA = {"power": 2.4, "elev": 0.6, "modis": 3, "smap": 45, "imerg": 1.5, "zonal": 6, "s2": 20}
 LAT, LON = 0.86, -77.62
 COORDS = [[-77.6208, 0.8592], [-77.6192, 0.8591], [-77.6191, 0.8608], [-77.6208, 0.8608]]
 
@@ -61,6 +62,13 @@ def f_modis(coll, band, scale, lat, lon, start, end, factor, offset=0.0):
 def f_smap(band, scale, lat, lon, *a, **k):
     _espera("smap")
     return [round(0.30 + m * 0.005, 4) for m in range(12)]
+
+
+def f_smap_mensual(lat, lon, *a, **k):
+    # paralelo._smap_mensual: las dos bandas en una sola consulta (en la Pi tarda ~21 s frente a ~56 s)
+    time.sleep(21 * ESCALA)
+    v = [round(0.30 + m * 0.005, 4) for m in range(12)]
+    return list(v), list(v)
 
 
 def f_imerg(lat, lon, *a, **k):
@@ -118,6 +126,7 @@ def main():
     for p in PARCHES:
         p.start()
     from api import paralelo
+    mock.patch.object(paralelo, "_smap_mensual", f_smap_mensual).start()
     import rotation_score as rs
     crops = rs.load_crops()
     ok = True

@@ -59,14 +59,49 @@ def power_point(lat, lon):
         return pw.copy()
 
 
+def _smap_mensual(lat, lon, start="2020-01-01", end="2025-12-31"):
+    """Humedad SMAP (superficie y raiz) en UNA consulta: Earth Engine promedia cada mes en el servidor y solo
+    devuelve 12 valores por banda. Mismas imagenes (1 por dia, 13 h), misma proyeccion nativa y escala 11 km que
+    pe._smap_clim, asi que da los mismos valores (verificado en la Orange Pi: diferencia 0) en ~21 s en vez de
+    ~56 s: pe._smap_clim trae las ~2.000 imagenes una por una y lo hace dos veces, una por banda."""
+    pt = ee.Geometry.Point([lon, lat])
+    c = (ee.ImageCollection("NASA/SMAP/SPL4SMGP/008").select(["sm_surface", "sm_rootzone"])
+         .filterDate(start, end).filter(ee.Filter.calendarRange(13, 13, "hour")))
+    proj = ee.Image(c.first()).select("sm_surface").projection()
+    meses = [ee.Feature(None, c.filter(ee.Filter.calendarRange(m, m, "month")).mean().setDefaultProjection(proj)
+                        .reduceRegion(ee.Reducer.first(), pt, 11000)).set("moy", m) for m in range(1, 13)]
+    surf, root = [None] * 12, [None] * 12
+    for f in ee.FeatureCollection(meses).getInfo()["features"]:
+        p = f["properties"]
+        m = int(p["moy"]) - 1
+        if p.get("sm_surface") is not None:
+            surf[m] = round(float(p["sm_surface"]), 4)
+        if p.get("sm_rootzone") is not None:
+            root[m] = round(float(p["sm_rootzone"]), 4)
+    return surf, root
+
+
+def _capas_smap(lat, lon):
+    """Las dos capas SMAP con el mismo estado que pe._layer ('ok' / 'sin_datos' / 'error')."""
+    try:
+        surf, root = _smap_mensual(lat, lon)
+    except Exception as ex:
+        return {k: {"status": "error", "reason": repr(ex)[:90], "values": [None] * 12} for k in ("sm_surf", "sm_root")}
+    return {"sm_surf": pe._layer(lambda: surf), "sm_root": pe._layer(lambda: root)}
+
+
+# Orden de las capas igual que pe.gee_point
+CAPAS = ("ndvi", "evi", "lst_c", "sm_surf", "sm_root", "rain_imerg")
+
+
 def _capas_gee(lat, lon):
-    """Las seis capas de pe.gee_point, como tareas independientes (cada una ya atrapa sus errores con _layer)."""
+    """Las capas de pe.gee_point como tareas independientes (cada una atrapa sus errores).
+    La tarea "smap" devuelve las dos capas de humedad juntas."""
     return {
         "ndvi": lambda: pe._layer(lambda: pe._modis_clim("MODIS/061/MOD13Q1", "NDVI", 250, lat, lon, "2001-01-01", "2025-12-31", 0.0001)),
         "evi": lambda: pe._layer(lambda: pe._modis_clim("MODIS/061/MOD13Q1", "EVI", 250, lat, lon, "2001-01-01", "2025-12-31", 0.0001)),
         "lst_c": lambda: pe._layer(lambda: pe._modis_clim("MODIS/061/MOD11A2", "LST_Day_1km", 1000, lat, lon, "2001-01-01", "2025-12-31", 0.02, -273.15)),
-        "sm_surf": lambda: pe._layer(lambda: pe._smap_clim("sm_surface", 11000, lat, lon)),
-        "sm_root": lambda: pe._layer(lambda: pe._smap_clim("sm_rootzone", 11000, lat, lon)),
+        "smap": lambda: _capas_smap(lat, lon),
         "rain_imerg": lambda: pe._layer(lambda: pe._imerg_clim(lat, lon)),
     }
 
@@ -115,7 +150,8 @@ def analizar_punto(lat, lon, crops=None):
     tareas = {"pw": lambda: power_point(lat, lon), "elev": lambda: pe.elev_point(lat, lon)}
     tareas.update(_capas_gee(lat, lon))
     r = _en_paralelo(tareas)
-    veg = {k: r[k] for k in _capas_gee(lat, lon)}  # mismo orden de claves que pe.gee_point
+    r.update(r.pop("smap"))                # sm_surf y sm_root
+    veg = {k: r[k] for k in CAPAS}         # mismo orden de claves que pe.gee_point
     return _armar_punto(lat, lon, crops, r["pw"], r["elev"], veg)
 
 
