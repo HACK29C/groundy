@@ -15,6 +15,7 @@ POWER: una parcela descargaba NASA POWER hasta 3 veces (el punto y las rotacione
 Si point_engine cambia su forma de armar el resultado, hay que reflejarlo en `_armar_punto`
 (tests/test_paralelo.py compara ambos y avisa si se separan).
 """
+import os
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -81,10 +82,34 @@ def _smap_mensual(lat, lon, start="2020-01-01", end="2025-12-31"):
     return surf, root
 
 
+# Climatologia SMAP precalculada (misma coleccion, periodo, filtro de 13 h y cuadricula nativa que
+# _smap_mensual), guardada una vez como imagen de 24 bandas en el proyecto de Earth Engine. Leer un pixel tarda
+# <1 s en vez de promediar 2.191 imagenes (~21 s). Si no existe o falla, se calcula en vivo como antes.
+SMAP_ASSET = os.environ.get("SMAP_ASSET", "projects/kinetic-anvil-457906-e8/assets/groundy_smap_clim_2020_2025")
+
+
+def _smap_precalculado(lat, lon):
+    """Lee los 12 meses x 2 bandas del asset en el pixel del punto (misma escala de 11 km que _smap_mensual)."""
+    d = (ee.Image(SMAP_ASSET).reduceRegion(ee.Reducer.first(), ee.Geometry.Point([lon, lat]), 11000).getInfo())
+    surf = [None if d.get("sm_surface_%02d" % m) is None else round(float(d["sm_surface_%02d" % m]), 4) for m in range(1, 13)]
+    root = [None if d.get("sm_rootzone_%02d" % m) is None else round(float(d["sm_rootzone_%02d" % m]), 4) for m in range(1, 13)]
+    return surf, root
+
+
+def _smap(lat, lon):
+    """Primero el asset precalculado; si no esta disponible, el calculo en vivo (mismos valores)."""
+    if SMAP_ASSET:
+        try:
+            return _smap_precalculado(lat, lon)
+        except Exception:
+            pass
+    return _smap_mensual(lat, lon)
+
+
 def _capas_smap(lat, lon):
     """Las dos capas SMAP con el mismo estado que pe._layer ('ok' / 'sin_datos' / 'error')."""
     try:
-        surf, root = _smap_mensual(lat, lon)
+        surf, root = _smap(lat, lon)
     except Exception as ex:
         return {k: {"status": "error", "reason": repr(ex)[:90], "values": [None] * 12} for k in ("sm_surf", "sm_root")}
     return {"sm_surf": pe._layer(lambda: surf), "sm_root": pe._layer(lambda: root)}
