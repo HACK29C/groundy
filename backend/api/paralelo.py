@@ -15,6 +15,7 @@ POWER: una parcela descargaba NASA POWER hasta 3 veces (el punto y las rotacione
 Si point_engine cambia su forma de armar el resultado, hay que reflejarlo en `_armar_punto`
 (tests/test_paralelo.py compara ambos y avisa si se separan).
 """
+import math
 import os
 import threading
 import time
@@ -88,9 +89,26 @@ def _smap_mensual(lat, lon, start="2020-01-01", end="2025-12-31"):
 SMAP_ASSET = os.environ.get("SMAP_ASSET", "projects/kinetic-anvil-457906-e8/assets/groundy_smap_clim_2020_2025")
 
 
+# Cuadricula nativa de SMAP L4 en Earth Engine (la del asset) y la de 11 km que usa el calculo en vivo
+# (= ee.Projection("EPSG:4326", SMAP_NATIVO).atScale(11000), consultado a Earth Engine el 19 nov 2026).
+SMAP_NATIVO = [0.09516256938937351, 0, -180, 0, -0.09516149300142858, 85.0445018795655]
+SMAP_11KM = [0.0988152401064585, 0, -180, 0, -0.09881412240299685, 85.0445018795655]
+
+
+def _centro_11km(lat, lon):
+    """Centro de la celda de 11 km que contiene el punto. El calculo en vivo toma el pixel nativo que cae en ese
+    centro (vecino mas cercano); leer el asset a 11 km directamente promediaria 4 pixeles y daria otro valor."""
+    a, _, x0, _, e, y0 = SMAP_11KM
+    i, j = math.floor((lon - x0) / a), math.floor((lat - y0) / e)
+    return y0 + (j + 0.5) * e, x0 + (i + 0.5) * a
+
+
 def _smap_precalculado(lat, lon):
-    """Lee los 12 meses x 2 bandas del asset en el pixel del punto (misma escala de 11 km que _smap_mensual)."""
-    d = (ee.Image(SMAP_ASSET).reduceRegion(ee.Reducer.first(), ee.Geometry.Point([lon, lat]), 11000).getInfo())
+    """Lee los 12 meses x 2 bandas del asset en el mismo pixel que usa _smap_mensual (verificado en la Orange Pi
+    con 12 lugares del mundo: valores identicos; ~1 s)."""
+    clat, clon = _centro_11km(lat, lon)
+    d = (ee.Image(SMAP_ASSET).reduceRegion(ee.Reducer.first(), ee.Geometry.Point([clon, clat]),
+                                           crs="EPSG:4326", crsTransform=SMAP_NATIVO).getInfo())
     surf = [None if d.get("sm_surface_%02d" % m) is None else round(float(d["sm_surface_%02d" % m]), 4) for m in range(1, 13)]
     root = [None if d.get("sm_rootzone_%02d" % m) is None else round(float(d["sm_rootzone_%02d" % m]), 4) for m in range(1, 13)]
     return surf, root
